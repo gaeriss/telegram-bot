@@ -35,6 +35,17 @@ impl Server {
         self.allowed_chat.is_empty() || self.allowed_chat.contains(&chat_id.0)
     }
 
+    pub async fn about(
+        &self,
+        bot: &teloxide::Bot,
+        msg: &teloxide::types::Message,
+    ) -> crate::MyResult {
+        bot.send_message(msg.chat.id, env!("CARGO_PKG_REPOSITORY"))
+            .await?;
+
+        Ok(())
+    }
+
     pub async fn help(
         &self,
         bot: &teloxide::Bot,

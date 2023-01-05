@@ -33,6 +33,8 @@ async fn main() -> crate::MyResult {
 #[derive(teloxide::utils::command::BotCommands, Clone)]
 #[command(rename_rule = "lowercase")]
 enum Command {
+    #[command(description = "À propos de moi")]
+    About,
     #[command(description = "Affiche la somme des transactions CB des 12 dernières heures", parse_with = date)]
     Cb { date: chrono::NaiveDate },
     #[command(description = "Affiche ce message")]
@@ -58,6 +60,7 @@ async fn command(
     }
 
     match cmd {
+        Command::About => server.about(&bot, &msg).await?,
         Command::Cb { date } => server.cb(&bot, &msg, date).await?,
         Command::Help => server.help(&bot, &msg).await?,
     };
