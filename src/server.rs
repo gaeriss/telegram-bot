@@ -3,6 +3,7 @@ use teloxide::prelude::Requester;
 #[derive(Clone)]
 pub struct Server {
     sumup: sumup::SumUp,
+    allowed_chat: Vec<i64>,
 }
 
 impl Server {
@@ -19,7 +20,19 @@ impl Server {
 
         let sumup = sumup::SumUp::from(config)?;
 
-        Ok(Self { sumup })
+        let allowed_chat = env("ALLOWED_CHAT_ID")
+            .split(',')
+            .map(str::parse)
+            .collect::<std::result::Result<_, _>>()?;
+
+        Ok(Self {
+            allowed_chat,
+            sumup,
+        })
+    }
+
+    pub fn is_allowed(&self, chat_id: teloxide::types::ChatId) -> bool {
+        self.allowed_chat.is_empty() || self.allowed_chat.contains(&chat_id.0)
     }
 
     pub async fn help(

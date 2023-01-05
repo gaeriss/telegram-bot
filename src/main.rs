@@ -53,6 +53,10 @@ async fn command(
     server: Server,
     cmd: Command,
 ) -> MyResult {
+    if !server.is_allowed(msg.chat.id) {
+        return Err(Error::Auth);
+    }
+
     match cmd {
         Command::Cb { date } => server.cb(&bot, &msg, date).await?,
         Command::Help => server.help(&bot, &msg).await?,
