@@ -13,15 +13,24 @@ async fn main() -> crate::MyResult {
 
     env_logger::init();
 
-    let server = Server::new()?;
+    let shared_server = std::sync::Arc::new(tokio::sync::Mutex::new(Server::new()?));
     let bot = teloxide::Bot::from_env();
+
+    let server = shared_server.clone();
+    let _ = tokio::spawn(async move {
+        loop {
+            if let Err(err) = Server::refresh_token(&server).await {
+                log::error!("{err}");
+            }
+        }
+    });
 
     let handler = teloxide::types::Update::filter_message()
         .filter_command::<Command>()
         .endpoint(command);
 
-    teloxide::prelude::Dispatcher::builder(bot, handler)
-        .dependencies(teloxide::dptree::deps![server])
+    teloxide::dispatching::Dispatcher::builder(bot, handler)
+        .dependencies(teloxide::dptree::deps![shared_server])
         .enable_ctrlc_handler()
         .build()
         .dispatch()
@@ -52,9 +61,11 @@ fn date(input: String) -> Result<(chrono::NaiveDate,), teloxide::utils::command:
 async fn command(
     bot: teloxide::Bot,
     msg: teloxide::types::Message,
-    server: Server,
     cmd: Command,
+    server: SharedServer,
 ) -> MyResult {
+    let server = server.lock().await;
+
     if !server.is_allowed(msg.chat.id) {
         return Err(Error::Auth);
     }

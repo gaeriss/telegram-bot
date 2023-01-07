@@ -5,7 +5,7 @@ pub enum Error {
     #[error("Unauthorized channel")]
     Auth,
     #[error("{0}")]
-    ParseIntError(#[from] std::num::ParseIntError),
+    ParseInt(#[from] std::num::ParseIntError),
     #[error("{0}")]
     Sumup(#[from] sumup::Error),
     #[error("{0}")]

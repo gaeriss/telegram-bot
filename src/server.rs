@@ -1,5 +1,7 @@
 use teloxide::prelude::Requester;
 
+pub type SharedServer = std::sync::Arc<tokio::sync::Mutex<Server>>;
+
 #[derive(Clone)]
 pub struct Server {
     sumup: sumup::SumUp,
@@ -29,6 +31,24 @@ impl Server {
             allowed_chat,
             sumup,
         })
+    }
+
+    pub async fn refresh_token(server: &SharedServer) -> crate::MyResult {
+        let expires_in = server
+            .lock()
+            .await
+            .sumup
+            .access_token()
+            .expires_in
+            .unwrap_or(5 * 60);
+        let duration = std::time::Duration::new(expires_in.into(), 0);
+        tokio::time::sleep(duration).await;
+
+        server.lock().await.sumup.refresh_token(None)?;
+
+        log::info!("token refreshed");
+
+        Ok(())
     }
 
     pub fn is_allowed(&self, chat_id: teloxide::types::ChatId) -> bool {
