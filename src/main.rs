@@ -9,7 +9,7 @@ async fn main() -> crate::MyResult {
     use teloxide::dispatching::{HandlerExt, UpdateFilterExt};
 
     #[cfg(debug_assertions)]
-    dotenv::dotenv().ok();
+    dotenvy::dotenv().ok();
 
     env_logger::init();
 
