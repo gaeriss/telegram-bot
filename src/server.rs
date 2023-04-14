@@ -11,10 +11,10 @@ pub struct Server {
 impl Server {
     pub fn new() -> crate::MyResult<Self> {
         let config = sumup::Config {
-            client_id: env("SUMUP_CLIENT_ID"),
-            client_secret: env("SUMUP_CLIENT_SECRET"),
-            username: Some(env("SUMUP_USERNAME")),
-            password: Some(env("SUMUP_PASSWORD")),
+            client_id: envir::get("SUMUP_CLIENT_ID")?,
+            client_secret: envir::get("SUMUP_CLIENT_SECRET")?,
+            username: envir::try_get("SUMUP_USERNAME")?,
+            password: envir::try_get("SUMUP_PASSWORD")?,
             grant_type: sumup::config::GrantType::Password,
 
             ..Default::default()
@@ -22,7 +22,7 @@ impl Server {
 
         let sumup = sumup::SumUp::from(config)?;
 
-        let allowed_chat = env("ALLOWED_CHAT_ID")
+        let allowed_chat = envir::get("ALLOWED_CHAT_ID")?
             .split(',')
             .map(str::parse)
             .collect::<std::result::Result<_, _>>()?;
@@ -106,8 +106,4 @@ impl Server {
 
         Ok(())
     }
-}
-
-fn env(name: &str) -> String {
-    std::env::var(name).unwrap_or_else(|_| panic!("Missing {name} env variable"))
 }
