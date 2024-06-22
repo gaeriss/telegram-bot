@@ -8,10 +8,7 @@ use server::*;
 async fn main() -> crate::MyResult {
     use teloxide::dispatching::{HandlerExt, UpdateFilterExt};
 
-    #[cfg(debug_assertions)]
-    envir::dotenv();
-
-    env_logger::init();
+    envir::init();
 
     let shared_server = std::sync::Arc::new(tokio::sync::Mutex::new(Server::new()?));
     let bot = teloxide::Bot::from_env();
