@@ -20,7 +20,8 @@ async fn main() -> crate::MyResult {
                 log::error!("{err}");
             }
         }
-    }).await;
+    })
+    .await;
 
     let handler = teloxide::types::Update::filter_message()
         .filter_command::<Command>()
