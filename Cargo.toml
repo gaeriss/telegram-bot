@@ -16,7 +16,7 @@ default-features = false
 features = ["clock", "std"]
 
 [dependencies.teloxide]
-version = "0.15"
+version = "0.16"
 features = ["macros"]
 
 [dependencies.tokio]
