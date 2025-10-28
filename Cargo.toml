@@ -7,7 +7,7 @@ repository = "https://github.com/sanpii/nec-telegram-bot"
 [dependencies]
 envir = "1.0"
 log = "0.4"
-sumup = "0.4"
+sumup = "0.5"
 thiserror = "2.0"
 
 [dependencies.chrono]
