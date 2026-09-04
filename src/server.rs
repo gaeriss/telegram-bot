@@ -83,12 +83,15 @@ impl Server {
         &self,
         bot: &teloxide::Bot,
         msg: &teloxide::types::Message,
-        date: chrono::NaiveDate,
+        date: jiff::civil::Date,
     ) -> crate::MyResult {
+        use jiff::ToSpan as _;
+
         let end = date
-            .and_hms_opt(2, 0, 0)
-            .unwrap_or_else(|| chrono::offset::Local::now().naive_local());
-        let start = end - chrono::Duration::hours(12);
+            .at(2, 0, 0, 0)
+            .to_zoned(jiff::tz::TimeZone::UTC)
+            .unwrap_or_else(|_| jiff::Zoned::now());
+        let start = end - 12.hours();
 
         let filter = sumup::services::transactions::Filter {
             start_date: start.format("%Y-%m-%d").to_string(),
