@@ -10,25 +10,15 @@ async fn main() -> crate::MyResult {
 
     envir::init();
 
-    let shared_server = std::sync::Arc::new(tokio::sync::Mutex::new(Server::new()?));
+    let server = Server::new()?;
     let bot = teloxide::Bot::from_env();
-
-    let server = shared_server.clone();
-    let _ = tokio::spawn(async move {
-        loop {
-            if let Err(err) = Server::refresh_token(&server).await {
-                log::error!("{err}");
-            }
-        }
-    })
-    .await;
 
     let handler = teloxide::types::Update::filter_message()
         .filter_command::<Command>()
         .endpoint(command);
 
     teloxide::dispatching::Dispatcher::builder(bot, handler)
-        .dependencies(teloxide::dptree::deps![shared_server])
+        .dependencies(teloxide::dptree::deps![server])
         .enable_ctrlc_handler()
         .build()
         .dispatch()
@@ -49,9 +39,7 @@ enum Command {
 }
 
 fn date(input: String) -> Result<(jiff::civil::Date,), teloxide::utils::command::ParseError> {
-    let date = input
-        .parse()
-        .unwrap_or_else(|_| jiff::Zoned::now().date());
+    let date = input.parse().unwrap_or_else(|_| jiff::Zoned::now().date());
 
     Ok((date,))
 }
