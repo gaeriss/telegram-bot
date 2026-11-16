@@ -6,7 +6,6 @@ repository = "https://github.com/sanpii/nec-telegram-bot"
 
 [dependencies]
 envir = "1.0"
-jiff = "0.2"
 log = "0.4"
 thiserror = "2.0"
 

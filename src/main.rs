@@ -33,13 +33,13 @@ enum Command {
     #[command(description = "À propos de moi")]
     About,
     #[command(description = "Affiche la somme des transactions CB des 12 dernières heures", parse_with = date)]
-    Cb { date: jiff::civil::Date },
+    Cb { date: sumup::datetime::jiff::civil::Date },
     #[command(description = "Affiche ce message")]
     Help,
 }
 
-fn date(input: String) -> Result<(jiff::civil::Date,), teloxide::utils::command::ParseError> {
-    let date = input.parse().unwrap_or_else(|_| jiff::Zoned::now().date());
+fn date(input: String) -> Result<(sumup::datetime::jiff::civil::Date,), teloxide::utils::command::ParseError> {
+    let date = input.parse().unwrap_or_else(|_| sumup::datetime::jiff::Zoned::now().date());
 
     Ok((date,))
 }

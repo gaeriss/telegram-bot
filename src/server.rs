@@ -56,16 +56,16 @@ impl Server {
         &self,
         bot: &teloxide::Bot,
         msg: &teloxide::types::Message,
-        date: jiff::civil::Date,
+        date: sumup::datetime::jiff::civil::Date,
     ) -> crate::MyResult {
-        use jiff::ToSpan as _;
+        use sumup::datetime::jiff::ToSpan as _;
 
         let merchant_code = envir::get("SUMUP_MERCHANT_CODE")?;
 
         let end = date
             .at(2, 0, 0, 0)
-            .to_zoned(jiff::tz::TimeZone::UTC)
-            .unwrap_or_else(|_| jiff::Zoned::now());
+            .to_zoned(sumup::datetime::jiff::tz::TimeZone::UTC)
+            .unwrap_or_else(|_| sumup::datetime::jiff::Zoned::now());
         let start = end.clone() - 12.hours();
 
         let params = sumup::resources::transactions::ListParams {
