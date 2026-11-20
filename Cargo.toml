@@ -10,7 +10,7 @@ log = "0.4"
 thiserror = "2.0"
 
 [dependencies.sumup]
-version = "0.6"
+version = "0.7"
 default-features = false
 features = ["jiff"]
 
